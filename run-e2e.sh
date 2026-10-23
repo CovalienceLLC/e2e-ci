@@ -74,7 +74,8 @@ IMAGE="${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}"
 # ---- 2. docker login (password via stdin, never printed or stored) ----------
 echo "==> Logging in to ${REGISTRY}"
 jq -re '.password' <<<"$resp" \
-  | docker login --username "$USERNAME" --password-stdin "$REGISTRY" >/dev/null
+  | docker login --username "$USERNAME" --password-stdin "$REGISTRY" >/dev/null \
+      2> >(grep -Ev 'credentials are stored unencrypted|credential helper to remove|docs.docker.com/go/credential-store' >&2)
 resp=""   # drop the credentials from memory once used
 
 # ---- 3. pull the image -----------------------------------------------------
